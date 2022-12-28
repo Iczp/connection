@@ -1,0 +1,79 @@
+{
+  "folders": {
+    "items": {
+      "src": {},
+      "test": {},
+      "host": {}
+    }
+  },
+  "packages": {
+    "IczpNet.Connection.Domain.Shared": {
+      "path": "src/IczpNet.Connection.Domain.Shared/IczpNet.Connection.Domain.Shared.abppkg.json",
+      "folder": "src"
+    },
+    "IczpNet.Connection.Domain": {
+      "path": "src/IczpNet.Connection.Domain/IczpNet.Connection.Domain.abppkg.json",
+      "folder": "src"
+    },
+    "IczpNet.Connection.Application.Contracts": {
+      "path": "src/IczpNet.Connection.Application.Contracts/IczpNet.Connection.Application.Contracts.abppkg.json",
+      "folder": "src"
+    },
+    "IczpNet.Connection.Application": {
+      "path": "src/IczpNet.Connection.Application/IczpNet.Connection.Application.abppkg.json",
+      "folder": "src"
+    },
+    "IczpNet.Connection.EntityFrameworkCore": {
+      "path": "src/IczpNet.Connection.EntityFrameworkCore/IczpNet.Connection.EntityFrameworkCore.abppkg.json",
+      "folder": "src"
+    },
+    "IczpNet.Connection.MongoDB": {
+      "path": "src/IczpNet.Connection.MongoDB/IczpNet.Connection.MongoDB.abppkg.json",
+      "folder": "src"
+    },
+    "IczpNet.Connection.HttpApi": {
+      "path": "src/IczpNet.Connection.HttpApi/IczpNet.Connection.HttpApi.abppkg.json",
+      "folder": "src"
+    },
+    "IczpNet.Connection.HttpApi.Client": {
+      "path": "src/IczpNet.Connection.HttpApi.Client/IczpNet.Connection.HttpApi.Client.abppkg.json",
+      "folder": "src"
+    },
+    "IczpNet.Connection.TestBase": {
+      "path": "test/IczpNet.Connection.TestBase/IczpNet.Connection.TestBase.abppkg.json",
+      "folder": "test"
+    },
+    "IczpNet.Connection.EntityFrameworkCore.Tests": {
+      "path": "test/IczpNet.Connection.EntityFrameworkCore.Tests/IczpNet.Connection.EntityFrameworkCore.Tests.abppkg.json",
+      "folder": "test"
+    },
+    "IczpNet.Connection.MongoDB.Tests": {
+      "path": "test/IczpNet.Connection.MongoDB.Tests/IczpNet.Connection.MongoDB.Tests.abppkg.json",
+      "folder": "test"
+    },
+    "IczpNet.Connection.Domain.Tests": {
+      "path": "test/IczpNet.Connection.Domain.Tests/IczpNet.Connection.Domain.Tests.abppkg.json",
+      "folder": "test"
+    },
+    "IczpNet.Connection.Application.Tests": {
+      "path": "test/IczpNet.Connection.Application.Tests/IczpNet.Connection.Application.Tests.abppkg.json",
+      "folder": "test"
+    },
+    "IczpNet.Connection.HttpApi.Host": {
+      "path": "host/IczpNet.Connection.HttpApi.Host/IczpNet.Connection.HttpApi.Host.abppkg.json",
+      "folder": "host"
+    },
+    "IczpNet.Connection.HttpApi.Client.ConsoleTestApp": {
+      "path": "test/IczpNet.Connection.HttpApi.Client.ConsoleTestApp/IczpNet.Connection.HttpApi.Client.ConsoleTestApp.abppkg.json",
+      "folder": "test"
+    },
+    "IczpNet.Connection.AuthServer": {
+      "path": "host/IczpNet.Connection.AuthServer/IczpNet.Connection.AuthServer.abppkg.json",
+      "folder": "host"
+    },
+    "IczpNet.Connection.Host.Shared": {
+      "path": "host/IczpNet.Connection.Host.Shared/IczpNet.Connection.Host.Shared.abppkg.json",
+      "folder": "host"
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "modules": {
+    "IczpNet.Connection": {
+      "path": "IczpNet.Connection.abpmdl.json"
+    }
+  }
+}
