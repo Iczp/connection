@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace IczpNet.Connection.Samples;
 
-public class SampleAppService : ConnectionAppService, ISampleAppService
+public class SampleAppService : BaseAppService, ISampleAppService
 {
     public Task<SampleDto> GetAsync()
     {

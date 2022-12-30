@@ -5,15 +5,16 @@ using System;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Services;
 using IczpNet.Connection.Options;
+using IczpNet.Connection.ServerHosts;
 
 namespace IczpNet.Connection.Connections
 {
     public class ConnectionManager : DomainService, IConnectionManager
     {
-        protected IRepository<Connection, Guid> Repository { get; }
+        protected IRepository<Connection, string> Repository { get; }
         protected ConnectionOptions Config { get; }
         public ConnectionManager(
-            IRepository<Connection, Guid> repository,
+            IRepository<Connection, string> repository,
             IOptions<ConnectionOptions> options)
         {
             Repository = repository;
@@ -22,10 +23,12 @@ namespace IczpNet.Connection.Connections
 
         public virtual async Task<Connection> OnlineAsync(Connection connection)
         {
+            if(!connection.ServerHostId.IsNullOrWhiteSpace())
+            {
+                connection.ServerHost = new ServerHost(connection.ServerHostId);
+            }
 
-            //var onlineCount = await GetOnlineCountAsync(Clock.Now);
             var entity = await Repository.InsertAsync(connection, autoSave: true);
-
             // 
             return entity;
         }
@@ -34,19 +37,19 @@ namespace IczpNet.Connection.Connections
             return Repository.CountAsync(x => x.ActiveTime > currentTime.AddSeconds(-Config.InactiveSeconds));
         }
 
-        public Task<Connection> GetAsync(Guid connectionId)
+        public Task<Connection> GetAsync(string connectionId)
         {
             return Repository.GetAsync(connectionId);
         }
 
-        public virtual async Task<Connection> UpdateActiveTimeAsync(Guid connectionId)
+        public virtual async Task<Connection> UpdateActiveTimeAsync(string connectionId)
         {
             var entity = await Repository.GetAsync(connectionId);
             entity.SetActiveTime(Clock.Now);
             return await Repository.UpdateAsync(entity, true);
         }
 
-        public virtual Task OfflineAsync(Guid connectionId)
+        public virtual Task OfflineAsync(string connectionId)
         {
             return Repository.DeleteAsync(connectionId);
         }

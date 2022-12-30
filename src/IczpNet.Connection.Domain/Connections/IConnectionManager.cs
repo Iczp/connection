@@ -10,9 +10,9 @@ namespace IczpNet.Connection.Connections
     {
         Task<Connection> OnlineAsync(Connection connection);
         Task<int> GetOnlineCountAsync(DateTime currentTime);
-        Task<Connection> UpdateActiveTimeAsync(Guid connectionId);
-        Task<Connection> GetAsync(Guid connectionId);
-        Task OfflineAsync(Guid connectionId);
+        Task<Connection> UpdateActiveTimeAsync(string connectionId);
+        Task<Connection> GetAsync(string connectionId);
+        Task OfflineAsync(string connectionId);
         Task<int> DeleteInactiveAsync();
     }
 }
