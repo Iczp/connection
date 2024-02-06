@@ -31,7 +31,7 @@ namespace IczpNet.Connection.Works
 
             Logger.LogInformation($"ConnectionWorker running:{DateTime.Now}, Timer.Period:{Timer.Period}ms");
 
-            var count = await ConnectionManager.DeleteInactiveAsync();
+            var count = await ConnectionManager.ClearUnactiveAsync();
 
             double ticks = DateTime.Now.Ticks - startTicks; /// 10000;
 

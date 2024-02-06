@@ -6,26 +6,33 @@ using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Services;
 using IczpNet.Connection.Options;
 using IczpNet.Connection.ServerHosts;
+using Microsoft.Extensions.Logging;
 
 namespace IczpNet.Connection.Connections
 {
     public class ConnectionManager : DomainService, IConnectionManager
     {
         protected IRepository<Connection, string> Repository { get; }
+
+        protected IRepository<ServerHost, string> ServerHostRepository { get; }
         protected ConnectionOptions Config { get; }
         public ConnectionManager(
             IRepository<Connection, string> repository,
-            IOptions<ConnectionOptions> options)
+            IOptions<ConnectionOptions> options,
+            IRepository<ServerHost, string> serverHostRepository)
         {
             Repository = repository;
             Config = options.Value;
+            ServerHostRepository = serverHostRepository;
         }
 
-        public virtual async Task<Connection> OnlineAsync(Connection connection)
+        public virtual async Task<Connection> CreateAsync(Connection connection)
         {
-            if(!connection.ServerHostId.IsNullOrWhiteSpace())
+            if (!connection.ServerHostId.IsNullOrWhiteSpace())
             {
-                connection.ServerHost = new ServerHost(connection.ServerHostId);
+                var serverHost = await ServerHostRepository.FindAsync(connection.ServerHostId);
+                serverHost ??= await ServerHostRepository.InsertAsync(new ServerHost(connection.ServerHostId));
+                connection.ServerHost = serverHost;
             }
 
             var entity = await Repository.InsertAsync(connection, autoSave: true);
@@ -44,17 +51,24 @@ namespace IczpNet.Connection.Connections
 
         public virtual async Task<Connection> UpdateActiveTimeAsync(string connectionId)
         {
-            var entity = await Repository.GetAsync(connectionId);
+            var entity = await Repository.FindAsync(connectionId);
+
+            if (entity == null)
+            {
+                Logger.LogWarning($"No such connectionId:{connectionId}");
+                return entity;
+            }
             entity.SetActiveTime(Clock.Now);
+
             return await Repository.UpdateAsync(entity, true);
         }
 
-        public virtual Task OfflineAsync(string connectionId)
+        public virtual Task DeleteAsync(string connectionId)
         {
             return Repository.DeleteAsync(connectionId);
         }
 
-        public virtual async Task<int> DeleteInactiveAsync()
+        public virtual async Task<int> ClearUnactiveAsync()
         {
             Expression<Func<Connection, bool>> predicate = x => x.ActiveTime < Clock.Now.AddSeconds(-Config.InactiveSeconds);
 

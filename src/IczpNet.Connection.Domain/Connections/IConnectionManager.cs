@@ -1,18 +1,25 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace IczpNet.Connection.Connections
 {
     public interface IConnectionManager
     {
-        Task<Connection> OnlineAsync(Connection connection);
+        /// <summary>
+        /// Online
+        /// </summary>
+        /// <param name="connection"></param>
+        /// <returns></returns>
+        Task<Connection> CreateAsync(Connection connection);
         Task<int> GetOnlineCountAsync(DateTime currentTime);
         Task<Connection> UpdateActiveTimeAsync(string connectionId);
         Task<Connection> GetAsync(string connectionId);
-        Task OfflineAsync(string connectionId);
-        Task<int> DeleteInactiveAsync();
+        /// <summary>
+        /// Offline
+        /// </summary>
+        /// <param name="connectionId"></param>
+        /// <returns></returns>
+        Task DeleteAsync(string connectionId);
+        Task<int> ClearUnactiveAsync();
     }
 }

@@ -17,13 +17,13 @@ namespace IczpNet.Connection
 
         public Task OfflineAsync(string id)
         {
-            return ConnectionManager.OfflineAsync(id);
+            return ConnectionManager.DeleteAsync(id);
         }
 
         public async Task<ConnectionDto> OnlineAsync(ConnectionCreateInput input)
         {
             var entity = await MapToEntityAsync(input);
-            var result = await ConnectionManager.OnlineAsync(entity);
+            var result = await ConnectionManager.CreateAsync(entity);
             return ObjectMapper.Map<Connections.Connection, ConnectionDto>(result);
         }
 

@@ -21,7 +21,7 @@ namespace IczpNet.Connection.Connections
 
         public virtual Guid? ChatObjectId { get; set; }
 
-        [StringLength(50)]
+        [StringLength(100)]
         public virtual string DeviceId { get; set; }
 
         [StringLength(36)]
