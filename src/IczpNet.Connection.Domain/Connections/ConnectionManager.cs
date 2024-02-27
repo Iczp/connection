@@ -13,7 +13,6 @@ namespace IczpNet.Connection.Connections
     public class ConnectionManager : DomainService, IConnectionManager
     {
         protected IRepository<Connection, string> Repository { get; }
-
         protected IRepository<ServerHost, string> ServerHostRepository { get; }
         protected ConnectionOptions Config { get; }
         public ConnectionManager(
