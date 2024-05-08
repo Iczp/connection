@@ -8,78 +8,77 @@ using IczpNet.Connection.Options;
 using IczpNet.Connection.ServerHosts;
 using Microsoft.Extensions.Logging;
 
-namespace IczpNet.Connection.Connections
+namespace IczpNet.Connection.Connections;
+
+public class ConnectionManager : DomainService, IConnectionManager
 {
-    public class ConnectionManager : DomainService, IConnectionManager
+    protected IRepository<Connection, string> Repository { get; }
+    protected IRepository<ServerHost, string> ServerHostRepository { get; }
+    protected ConnectionOptions Config { get; }
+    public ConnectionManager(
+        IRepository<Connection, string> repository,
+        IOptions<ConnectionOptions> options,
+        IRepository<ServerHost, string> serverHostRepository)
     {
-        protected IRepository<Connection, string> Repository { get; }
-        protected IRepository<ServerHost, string> ServerHostRepository { get; }
-        protected ConnectionOptions Config { get; }
-        public ConnectionManager(
-            IRepository<Connection, string> repository,
-            IOptions<ConnectionOptions> options,
-            IRepository<ServerHost, string> serverHostRepository)
+        Repository = repository;
+        Config = options.Value;
+        ServerHostRepository = serverHostRepository;
+    }
+
+    public virtual async Task<Connection> CreateAsync(Connection connection)
+    {
+        if (!connection.ServerHostId.IsNullOrWhiteSpace())
         {
-            Repository = repository;
-            Config = options.Value;
-            ServerHostRepository = serverHostRepository;
+            var serverHost = await ServerHostRepository.FindAsync(connection.ServerHostId);
+            serverHost ??= await ServerHostRepository.InsertAsync(new ServerHost(connection.ServerHostId));
+            connection.ServerHost = serverHost;
         }
 
-        public virtual async Task<Connection> CreateAsync(Connection connection)
-        {
-            if (!connection.ServerHostId.IsNullOrWhiteSpace())
-            {
-                var serverHost = await ServerHostRepository.FindAsync(connection.ServerHostId);
-                serverHost ??= await ServerHostRepository.InsertAsync(new ServerHost(connection.ServerHostId));
-                connection.ServerHost = serverHost;
-            }
+        var entity = await Repository.InsertAsync(connection, autoSave: true);
+        // 
+        return entity;
+    }
+    public Task<int> GetOnlineCountAsync(DateTime currentTime)
+    {
+        return Repository.CountAsync(x => x.ActiveTime > currentTime.AddSeconds(-Config.InactiveSeconds));
+    }
 
-            var entity = await Repository.InsertAsync(connection, autoSave: true);
-            // 
+    public Task<Connection> GetAsync(string connectionId)
+    {
+        return Repository.GetAsync(connectionId);
+    }
+
+    public virtual async Task<Connection> UpdateActiveTimeAsync(string connectionId)
+    {
+        var entity = await Repository.FindAsync(connectionId);
+
+        if (entity == null)
+        {
+            Logger.LogWarning($"No such connectionId:{connectionId}");
             return entity;
         }
-        public Task<int> GetOnlineCountAsync(DateTime currentTime)
+        entity.SetActiveTime(Clock.Now);
+
+        return await Repository.UpdateAsync(entity, true);
+    }
+
+    public virtual Task DeleteAsync(string connectionId)
+    {
+        return Repository.DeleteAsync(connectionId);
+    }
+
+    public virtual async Task<int> ClearUnactiveAsync()
+    {
+        Expression<Func<Connection, bool>> predicate = x => x.ActiveTime < Clock.Now.AddSeconds(-Config.InactiveSeconds);
+
+        var count = await Repository.CountAsync(predicate);
+
+        if (count == 0)
         {
-            return Repository.CountAsync(x => x.ActiveTime > currentTime.AddSeconds(-Config.InactiveSeconds));
+            return 0;
         }
+        await Repository.DeleteAsync(predicate);
 
-        public Task<Connection> GetAsync(string connectionId)
-        {
-            return Repository.GetAsync(connectionId);
-        }
-
-        public virtual async Task<Connection> UpdateActiveTimeAsync(string connectionId)
-        {
-            var entity = await Repository.FindAsync(connectionId);
-
-            if (entity == null)
-            {
-                Logger.LogWarning($"No such connectionId:{connectionId}");
-                return entity;
-            }
-            entity.SetActiveTime(Clock.Now);
-
-            return await Repository.UpdateAsync(entity, true);
-        }
-
-        public virtual Task DeleteAsync(string connectionId)
-        {
-            return Repository.DeleteAsync(connectionId);
-        }
-
-        public virtual async Task<int> ClearUnactiveAsync()
-        {
-            Expression<Func<Connection, bool>> predicate = x => x.ActiveTime < Clock.Now.AddSeconds(-Config.InactiveSeconds);
-
-            var count = await Repository.CountAsync(predicate);
-
-            if (count == 0)
-            {
-                return 0;
-            }
-            await Repository.DeleteAsync(predicate);
-
-            return count;
-        }
+        return count;
     }
 }
